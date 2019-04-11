@@ -6,11 +6,11 @@ public class Sender : MonoBehaviour, IMsgSender
     void Update()
     {
         //MsgParamObject msgParamObject = new MsgParamObject();
-        MsgParamAction msgParamObject = new MsgParamAction();
-        msgParamObject.SetParam(TestAction);
+        MsgParam<string> msgParam = new MsgParam<string>();
+        msgParam.SetParam("Hello World");
 
         if (Input.GetMouseButtonDown(0))
-            this.SendLogicMsg(MsgName.MSG_TESTMSGNAME, msgParamObject);
+            this.SendLogicMsg(MsgName.MSG_TESTMSGNAME, msgParam);
     }
 
     private void TestAction()

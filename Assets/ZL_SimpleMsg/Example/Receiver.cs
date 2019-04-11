@@ -11,12 +11,13 @@ public class Receiver : MonoBehaviour, IMsgReceiver
     private void ReceiveMsg(IMsgParam args)
     {
         //MsgParamObject msgParamObject = args as MsgParamObject;
-        MsgParamAction msgParamObject = args as MsgParamAction;
-        foreach (var arg in msgParamObject.param)
-        {
-            //Debug.Log(arg);
-            arg.Invoke();
-        }
+        MsgParam<string> msgParam = args as MsgParam<string>;
+        Debug.Log(msgParam.param);
+        //foreach (var arg in msgParamObject.param)
+        //{
+        //    //Debug.Log(arg);
+        //    arg.Invoke();
+        //}
     }
 
     private void OnDestroy()

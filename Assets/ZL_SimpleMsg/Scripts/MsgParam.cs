@@ -31,6 +31,15 @@ namespace ZLMsg
     {
     }
 
+    public class MsgParam<T>: IMsgParam
+    {
+        public T param;
+        public void SetParam(T _param)
+        {
+            param = _param;
+        }
+    }
+
     public class MsgParamObject : IMsgParam
     {
         public object[] param;
