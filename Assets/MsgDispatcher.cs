@@ -1,5 +1,6 @@
 ﻿/****************************************************************************
  * Copyright (c) 2017 liangxie
+ * Copyright (c) 2019.4 zhaoliang
  * 
  * http://liangxiegame.com
  * https://github.com/liangxiegame/QFramework
@@ -25,10 +26,10 @@
 
 namespace QFramework
 {
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
 
-	public interface IMsgReceiver
+    public interface IMsgReceiver
 	{
 	}
 
