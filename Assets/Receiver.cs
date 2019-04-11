@@ -33,17 +33,10 @@ namespace QFramework.Example
 	/// </summary>
 	public class Receiver : MonoBehaviour, IMsgReceiver
 	{
-		// Use this for initialization
 		private void Awake()
 		{
-            Application.logMessageReceivedThreaded += Test;
 			this.RegisterLogicMsg("Receiver Show Sth", ReceiveMsg);
 		}
-
-        private void Test(string condition, string stackTrace, LogType type)
-        {
-            Debug.Log(condition + "_" + stackTrace + "_" + type);
-        }
 
         private void ReceiveMsg(object[] args)
 		{
