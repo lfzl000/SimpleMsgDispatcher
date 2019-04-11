@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  ****************************************************************************/
 
-namespace QFramework
+namespace ZLMsg
 {
     //不要用0
     public class MsgName

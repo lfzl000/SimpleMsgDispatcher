@@ -1,4 +1,4 @@
-﻿using QFramework;
+﻿using ZLMsg;
 using UnityEngine;
 
 public class Sender : MonoBehaviour, IMsgSender

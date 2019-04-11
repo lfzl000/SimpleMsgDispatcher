@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  ****************************************************************************/
 
-namespace QFramework
+namespace ZLMsg
 {
     using System;
 

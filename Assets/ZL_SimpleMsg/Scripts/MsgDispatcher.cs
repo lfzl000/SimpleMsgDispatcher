@@ -24,158 +24,159 @@
  * THE SOFTWARE.
  ****************************************************************************/
 
-namespace QFramework
+namespace ZLMsg
 {
     using System;
     using System.Collections.Generic;
 
     public interface IMsgReceiver
-	{
-	}
+    {
+    }
 
-	public interface IMsgSender
-	{
-	}
+    public interface IMsgSender
+    {
+    }
 
-	/// <summary>
-	/// 消息分发器
-	/// C# this扩展 需要静态类
-	/// 教程地址:http://liangxiegame.com/post/5/
-	public static class MsgDispatcher
-	{
-		/// <summary>
-		/// 消息捕捉器
-		/// </summary>
-		private class LogicMsgHandler
-		{
-			public readonly IMsgReceiver Receiver;
-			public readonly Action<IMsgParam> Callback;
+    /// <summary>
+    /// 消息分发器
+    /// C# this扩展 需要静态类
+    /// 教程地址:http://liangxiegame.com/post/5/
+    /// </summary>
+    public static class MsgDispatcher
+    {
+        /// <summary>
+        /// 消息捕捉器
+        /// </summary>
+        private class LogicMsgHandler
+        {
+            public readonly IMsgReceiver Receiver;
+            public readonly Action<IMsgParam> Callback;
 
-			public LogicMsgHandler(IMsgReceiver receiver, Action<IMsgParam> callback)
-			{
-				Receiver = receiver;
-				Callback = callback;
-			}
-		}
+            public LogicMsgHandler(IMsgReceiver receiver, Action<IMsgParam> callback)
+            {
+                Receiver = receiver;
+                Callback = callback;
+            }
+        }
 
-		/// <summary>
-		/// 每个消息名字维护一组消息捕捉器。
-		/// </summary>
-		static readonly Dictionary<int, List<LogicMsgHandler>> mMsgHandlerDict =
-			new Dictionary<int, List<LogicMsgHandler>>();
+        /// <summary>
+        /// 每个消息名字维护一组消息捕捉器。
+        /// </summary>
+        static readonly Dictionary<int, List<LogicMsgHandler>> mMsgHandlerDict =
+            new Dictionary<int, List<LogicMsgHandler>>();
 
 
-		/// <summary>
-		/// 注册消息,
-		/// 注意第一个参数,使用了C# this的扩展,
-		/// 所以只有实现IMsgReceiver的对象才能调用此方法
-		/// </summary>
-		public static void RegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback = null)
-		{
-			// 略过
-			if (msgName == 0)
-			{
-				 //Log.W("RegisterMsg:" + msgName + " is Null or Empty");
-				return;
-			}
+        /// <summary>
+        /// 注册消息,
+        /// 注意第一个参数,使用了C# this的扩展,
+        /// 所以只有实现IMsgReceiver的对象才能调用此方法
+        /// </summary>
+        public static void RegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback = null)
+        {
+            // 略过
+            if (msgName == 0)
+            {
+                //Log.W("RegisterMsg:" + msgName + " is Null or Empty");
+                return;
+            }
 
-			// 略过
-			//if (null == callback)
-			//{
-			//	 //Log.W("RegisterMsg:" + msgName + " callback is Null");
-			//	return;
-			//}
+            // 略过
+            //if (null == callback)
+            //{
+            //	 //Log.W("RegisterMsg:" + msgName + " callback is Null");
+            //	return;
+            //}
 
-			// 略过
-			if (!mMsgHandlerDict.ContainsKey(msgName))
-			{
-				mMsgHandlerDict[msgName] = new List<LogicMsgHandler>();
-			}
+            // 略过
+            if (!mMsgHandlerDict.ContainsKey(msgName))
+            {
+                mMsgHandlerDict[msgName] = new List<LogicMsgHandler>();
+            }
 
-			// 看下这里
-			var handlers = mMsgHandlerDict[msgName];
+            // 看下这里
+            var handlers = mMsgHandlerDict[msgName];
 
-			// 略过
-			// 防止重复注册
-			foreach (var handler in handlers)
-			{
-				if (handler.Receiver == self && handler.Callback == callback)
-				{
-					 //Log.W("RegisterMsg:" + msgName + " ayready Register");
-					return;
-				}
-			}
+            // 略过
+            // 防止重复注册
+            foreach (var handler in handlers)
+            {
+                if (handler.Receiver == self && handler.Callback == callback)
+                {
+                    //Log.W("RegisterMsg:" + msgName + " ayready Register");
+                    return;
+                }
+            }
 
-			// 再看下这里
-			handlers.Add(new LogicMsgHandler(self, callback));
-		}
+            // 再看下这里
+            handlers.Add(new LogicMsgHandler(self, callback));
+        }
 
-		/// <summary>
-		/// 发送消息
-		/// 注意第一个参数
-		/// </summary>
-		public static void SendLogicMsg(this IMsgSender sender, int msgName, IMsgParam paramList)
-		{
-			// 略过,不用看
-			if (msgName == 0)
-			{
-				 //Log.E("SendMsg is Null or Empty");
-				return;
-			}
+        /// <summary>
+        /// 发送消息
+        /// 注意第一个参数
+        /// </summary>
+        public static void SendLogicMsg(this IMsgSender sender, int msgName, IMsgParam paramList)
+        {
+            // 略过,不用看
+            if (msgName == 0)
+            {
+                //Log.E("SendMsg is Null or Empty");
+                return;
+            }
 
-			// 略过,不用看
-			if (!mMsgHandlerDict.ContainsKey(msgName))
-			{
-				 //Log.W("SendMsg is UnRegister");
-				return;
-			}
+            // 略过,不用看
+            if (!mMsgHandlerDict.ContainsKey(msgName))
+            {
+                //Log.W("SendMsg is UnRegister");
+                return;
+            }
 
-			// 开始看!!!!
-			var handlers = mMsgHandlerDict[msgName];
-			var handlerCount = handlers.Count;
+            // 开始看!!!!
+            var handlers = mMsgHandlerDict[msgName];
+            var handlerCount = handlers.Count;
 
-			// 之所以是从后向前遍历,是因为  从前向后遍历删除后索引值会不断变化
-			// 参考文章,http://www.2cto.com/kf/201312/266723.html
-			for (var index = handlerCount - 1; index >= 0; index--)
-			{
-				var handler = handlers[index];
+            // 之所以是从后向前遍历,是因为  从前向后遍历删除后索引值会不断变化
+            // 参考文章,http://www.2cto.com/kf/201312/266723.html
+            for (var index = handlerCount - 1; index >= 0; index--)
+            {
+                var handler = handlers[index];
 
-				if (handler.Receiver != null)
-				{
-					 //Log.W("SendLogicMsg:" + msgName + " Succeed");
-					handler.Callback(paramList);
-				}
-				else
-				{
-					handlers.Remove(handler);
-				}
-			}
-		}
+                if (handler.Receiver != null)
+                {
+                    //Log.W("SendLogicMsg:" + msgName + " Succeed");
+                    handler.Callback(paramList);
+                }
+                else
+                {
+                    handlers.Remove(handler);
+                }
+            }
+        }
 
-		/// <summary>
-		/// 注销消息
-		/// 注意第一个参数,使用了C# this的扩展,
-		/// 所以只有实现IMsgReceiver的对象才能调用此方法
-		/// </summary>
-		public static void UnRegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback)
-		{
-			if (msgName == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// 注销消息
+        /// 注意第一个参数,使用了C# this的扩展,
+        /// 所以只有实现IMsgReceiver的对象才能调用此方法
+        /// </summary>
+        public static void UnRegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback)
+        {
+            if (msgName == 0)
+            {
+                return;
+            }
 
-			var handlers = mMsgHandlerDict[msgName];
+            var handlers = mMsgHandlerDict[msgName];
 
-			// 删除List需要从后向前遍历
-			for (var index = handlers.Count - 1; index >= 0; index--)
-			{
-				var handler = handlers[index];
-				if (handler.Receiver == self && handler.Callback == callback)
-				{
-					handlers.Remove(handler);
-					break;
-				}
-			}
-		}
-	}
+            // 删除List需要从后向前遍历
+            for (var index = handlers.Count - 1; index >= 0; index--)
+            {
+                var handler = handlers[index];
+                if (handler.Receiver == self && handler.Callback == callback)
+                {
+                    handlers.Remove(handler);
+                    break;
+                }
+            }
+        }
+    }
 }
