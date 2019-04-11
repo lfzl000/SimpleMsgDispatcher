@@ -28,22 +28,27 @@ using UnityEngine;
 
 namespace QFramework.Example
 {
-	/// <summary>
-	/// 教程地址:http://liangxiegame.com/post/5/
-	/// </summary>
 	public class Receiver : MonoBehaviour, IMsgReceiver
 	{
 		private void Awake()
 		{
-			this.RegisterLogicMsg("Receiver Show Sth", ReceiveMsg);
+			this.RegisterLogicMsg(MsgName.MSG_TESTMSGNAME, ReceiveMsg);
 		}
 
-        private void ReceiveMsg(object[] args)
+        private void ReceiveMsg(IMsgParam args)
 		{
-			foreach (var arg in args)
+            //MsgParamObject msgParamObject = args as MsgParamObject;
+            MsgParamAction msgParamObject = args as MsgParamAction;
+            foreach (var arg in msgParamObject.param)
 			{
-				Debug.Log(arg);
+                //Debug.Log(arg);
+                arg.Invoke();
 			}
 		}
-	}
+
+        private void OnDestroy()
+        {
+            this.UnRegisterLogicMsg(MsgName.MSG_TESTMSGNAME, ReceiveMsg);
+        }
+    }
 }

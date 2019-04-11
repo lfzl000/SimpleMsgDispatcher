@@ -48,9 +48,9 @@ namespace QFramework
 		private class LogicMsgHandler
 		{
 			public readonly IMsgReceiver Receiver;
-			public readonly Action<object[]> Callback;
+			public readonly Action<IMsgParam> Callback;
 
-			public LogicMsgHandler(IMsgReceiver receiver, Action<object[]> callback)
+			public LogicMsgHandler(IMsgReceiver receiver, Action<IMsgParam> callback)
 			{
 				Receiver = receiver;
 				Callback = callback;
@@ -60,8 +60,8 @@ namespace QFramework
 		/// <summary>
 		/// 每个消息名字维护一组消息捕捉器。
 		/// </summary>
-		static readonly Dictionary<string, List<LogicMsgHandler>> mMsgHandlerDict =
-			new Dictionary<string, List<LogicMsgHandler>>();
+		static readonly Dictionary<int, List<LogicMsgHandler>> mMsgHandlerDict =
+			new Dictionary<int, List<LogicMsgHandler>>();
 
 
 		/// <summary>
@@ -69,21 +69,21 @@ namespace QFramework
 		/// 注意第一个参数,使用了C# this的扩展,
 		/// 所以只有实现IMsgReceiver的对象才能调用此方法
 		/// </summary>
-		public static void RegisterLogicMsg(this IMsgReceiver self, string msgName, Action<object[]> callback)
+		public static void RegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback = null)
 		{
 			// 略过
-			if (string.IsNullOrEmpty(msgName))
+			if (msgName == 0)
 			{
 				 //Log.W("RegisterMsg:" + msgName + " is Null or Empty");
 				return;
 			}
 
 			// 略过
-			if (null == callback)
-			{
-				 //Log.W("RegisterMsg:" + msgName + " callback is Null");
-				return;
-			}
+			//if (null == callback)
+			//{
+			//	 //Log.W("RegisterMsg:" + msgName + " callback is Null");
+			//	return;
+			//}
 
 			// 略过
 			if (!mMsgHandlerDict.ContainsKey(msgName))
@@ -113,10 +113,10 @@ namespace QFramework
 		/// 发送消息
 		/// 注意第一个参数
 		/// </summary>
-		public static void SendLogicMsg(this IMsgSender sender, string msgName, params object[] paramList)
+		public static void SendLogicMsg(this IMsgSender sender, int msgName, IMsgParam paramList)
 		{
 			// 略过,不用看
-			if (string.IsNullOrEmpty(msgName))
+			if (msgName == 0)
 			{
 				 //Log.E("SendMsg is Null or Empty");
 				return;
@@ -156,9 +156,9 @@ namespace QFramework
 		/// 注意第一个参数,使用了C# this的扩展,
 		/// 所以只有实现IMsgReceiver的对象才能调用此方法
 		/// </summary>
-		public static void UnRegisterLogicMsg(this IMsgReceiver self, string msgName, Action<object[]> callback)
+		public static void UnRegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback)
 		{
-			if (string.IsNullOrEmpty(msgName) || null == callback)
+			if (msgName == 0)
 			{
 				return;
 			}

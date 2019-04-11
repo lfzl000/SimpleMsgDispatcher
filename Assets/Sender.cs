@@ -27,15 +27,21 @@ using UnityEngine;
 
 namespace QFramework.Example
 {
-	/// <summary>
-	/// 教程地址:http://liangxiegame.com/post/5/
-	/// </summary>
 	public class Sender : MonoBehaviour, IMsgSender
 	{
 		void Update()
 		{
+            //MsgParamObject msgParamObject = new MsgParamObject();
+            MsgParamAction msgParamObject = new MsgParamAction();
+            msgParamObject.SetParam(TestAction);
+
             if (Input.GetMouseButtonDown(0))
-                this.SendLogicMsg("Receiver Show Sth", "Hello", "World");
+                this.SendLogicMsg(MsgName.MSG_TESTMSGNAME, msgParamObject);
 		}
+
+        private void TestAction()
+        {
+            Debug.Log("Hello World");
+        }
     }
 }
