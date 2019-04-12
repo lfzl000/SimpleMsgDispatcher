@@ -67,8 +67,8 @@ public class Sender : MonoBehaviour, IMsgSender
     private MsgParam<string> msgParam;
     private void Start()
     {
-            msgParam = new MsgParam<string>();
-            msgParam.SetParam("Hello World");
+        msgParam = new MsgParam<string>();
+        msgParam.SetParam("Hello World");
     }
 
     private void Update()

@@ -3,13 +3,17 @@ using UnityEngine;
 
 public class Sender : MonoBehaviour, IMsgSender
 {
-    void Update()
+    private MsgParam<string> msgParam;
+    private void Start()
+    {
+        msgParam = new MsgParam<string>();
+        msgParam.SetParam("Hello World");
+    }
+
+    private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            //MsgParamObject msgParamObject = new MsgParamObject();
-            MsgParam<string> msgParam = new MsgParam<string>();
-            msgParam.SetParam("Hello World");
             this.SendLogicMsg(MsgName.MSG_TESTMSGNAME, msgParam);
         }
     }
