@@ -29,18 +29,22 @@ namespace ZLMsg
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// 需要注册消息必须实现此接口
+    /// </summary>
     public interface IMsgReceiver
     {
     }
 
+    /// <summary>
+    /// 需要发送消息必须实现此接口
+    /// </summary>
     public interface IMsgSender
     {
     }
 
     /// <summary>
     /// 消息分发器
-    /// C# this扩展 需要静态类
-    /// 教程地址:http://liangxiegame.com/post/5/
     /// </summary>
     public static class MsgDispatcher
     {
@@ -67,83 +71,60 @@ namespace ZLMsg
 
 
         /// <summary>
-        /// 注册消息,
-        /// 注意第一个参数,使用了C# this的扩展,
-        /// 所以只有实现IMsgReceiver的对象才能调用此方法
+        /// 注册消息,必须实现接口IMsgReceiver
         /// </summary>
         public static void RegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback = null)
         {
-            // 略过
             if (msgName == 0)
             {
-                //Log.W("RegisterMsg:" + msgName + " is Null or Empty");
                 return;
             }
 
-            // 略过
-            //if (null == callback)
-            //{
-            //	 //Log.W("RegisterMsg:" + msgName + " callback is Null");
-            //	return;
-            //}
-
-            // 略过
             if (!mMsgHandlerDict.ContainsKey(msgName))
             {
                 mMsgHandlerDict[msgName] = new List<LogicMsgHandler>();
             }
 
-            // 看下这里
-            var handlers = mMsgHandlerDict[msgName];
-
-            // 略过
+            List<LogicMsgHandler> handlers = mMsgHandlerDict[msgName];
+            int handlerCount = handlers.Count;
             // 防止重复注册
-            foreach (var handler in handlers)
+            for (int i = 0; i < handlerCount; i++)
             {
+                LogicMsgHandler handler = handlers[i];
                 if (handler.Receiver == self && handler.Callback == callback)
                 {
-                    //Log.W("RegisterMsg:" + msgName + " ayready Register");
                     return;
                 }
             }
 
-            // 再看下这里
             handlers.Add(new LogicMsgHandler(self, callback));
         }
 
         /// <summary>
-        /// 发送消息
-        /// 注意第一个参数
+        /// 发送消息,必须实现接口IMsgSender
         /// </summary>
         public static void SendLogicMsg(this IMsgSender sender, int msgName, IMsgParam paramList)
         {
-            // 略过,不用看
             if (msgName == 0)
             {
-                //Log.E("SendMsg is Null or Empty");
                 return;
             }
 
-            // 略过,不用看
             if (!mMsgHandlerDict.ContainsKey(msgName))
             {
-                //Log.W("SendMsg is UnRegister");
                 return;
             }
 
-            // 开始看!!!!
-            var handlers = mMsgHandlerDict[msgName];
-            var handlerCount = handlers.Count;
+            List<LogicMsgHandler> handlers = mMsgHandlerDict[msgName];
+            int handlerCount = handlers.Count;
 
-            // 之所以是从后向前遍历,是因为  从前向后遍历删除后索引值会不断变化
-            // 参考文章,http://www.2cto.com/kf/201312/266723.html
-            for (var index = handlerCount - 1; index >= 0; index--)
+            // 之所以是从后向前遍历,是因为从前向后遍历删除后索引值会不断变化
+            for (int i = handlerCount - 1; i >= 0; i--)
             {
-                var handler = handlers[index];
+                LogicMsgHandler handler = handlers[i];
 
                 if (handler.Receiver != null)
                 {
-                    //Log.W("SendLogicMsg:" + msgName + " Succeed");
                     handler.Callback(paramList);
                 }
                 else
@@ -154,9 +135,7 @@ namespace ZLMsg
         }
 
         /// <summary>
-        /// 注销消息
-        /// 注意第一个参数,使用了C# this的扩展,
-        /// 所以只有实现IMsgReceiver的对象才能调用此方法
+        /// 注销消息,必须实现接口IMsgReceiver
         /// </summary>
         public static void UnRegisterLogicMsg(this IMsgReceiver self, int msgName, Action<IMsgParam> callback)
         {
@@ -165,12 +144,11 @@ namespace ZLMsg
                 return;
             }
 
-            var handlers = mMsgHandlerDict[msgName];
+            List<LogicMsgHandler> handlers = mMsgHandlerDict[msgName];
 
-            // 删除List需要从后向前遍历
-            for (var index = handlers.Count - 1; index >= 0; index--)
+            for (int i = handlers.Count - 1; i >= 0; i--)
             {
-                var handler = handlers[index];
+                LogicMsgHandler handler = handlers[i];
                 if (handler.Receiver == self && handler.Callback == callback)
                 {
                     handlers.Remove(handler);

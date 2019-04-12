@@ -10,9 +10,9 @@ public class Receiver : MonoBehaviour, IMsgReceiver
 
     private void ReceiveMsg(IMsgParam args)
     {
-        //MsgParamObject msgParamObject = args as MsgParamObject;
         MsgParam<string> msgParam = args as MsgParam<string>;
         Debug.Log(msgParam.param);
+        //MsgParamObject msgParamObject = args as MsgParamObject;
         //foreach (var arg in msgParamObject.param)
         //{
         //    //Debug.Log(arg);
